@@ -1,10 +1,21 @@
 import axios from 'axios';
 import { SEED_LISTINGS, SEED_USERS, SEED_OFFERS, SEED_NOTIFICATIONS, SEED_STATS } from './mockData';
 
+const apiBase = import.meta.env.VITE_API_BASE_URL
+  ? `${import.meta.env.VITE_API_BASE_URL.replace(/\/+$/, '')}/api`
+  : '/api';
+
 const api = axios.create({
-  baseURL: '/api',
+  baseURL: apiBase,
   headers: { 'Content-Type': 'application/json' },
 });
+
+export const getUploadUrl = (filename) => {
+  if (!filename) return '';
+  if (filename.startsWith('http://') || filename.startsWith('https://')) return filename;
+  const baseUrl = import.meta.env.VITE_API_BASE_URL || '';
+  return `${baseUrl.replace(/\/+$/, '')}/uploads/${filename.replace(/^\/+/, '')}`;
+};
 
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');

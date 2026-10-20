@@ -14,20 +14,6 @@ RUN mvn clean package -DskipTests
 FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 
-# Create non-root user for security
-RUN addgroup -S appgroup && adduser -S appuser -G appgroup
-USER appuser
-
-COPY --from=build /app/target/*.jar app.jar
-
-ENV PORT=8080
-EXPOSE 8080
-
-ENTRYPOINT ["java", "-Djava.security.egd=file:/dev/./urandom", "-jar", "app.jar"]
-# Stage 2: Minimal Runtime Image
-FROM eclipse-temurin:21-jre-alpine
-WORKDIR /app
-
 # Create non-root user and pre-create the uploads directory with proper permissions
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup && \
     mkdir -p /app/uploads && \
